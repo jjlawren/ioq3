@@ -208,8 +208,20 @@ int Pickup_Holdable( gentity_t *ent, gentity_t *other ) {
 
 void Add_Ammo (gentity_t *ent, int weapon, int count)
 {
-	ent->client->ps.ammo[weapon] += count;
-	if ( ent->client->ps.ammo[weapon] > 200 ) {
+	if (weapon == WP_RAILGUN) {
+		if (ent->client->ps.ammo[weapon] == 0) {
+			ent->client->ps.ammo[weapon]=1;
+		} else {
+			ent->client->ps.ammo[weapon] += 1;
+		}
+		if (ent->client->ps.ammo[weapon] > 3) {
+			ent->client->ps.ammo[weapon]=3;
+		}
+	} else {
+		ent->client->ps.ammo[weapon] += count;
+	}
+
+	if (ent->client->ps.ammo[weapon] > 200) {
 		ent->client->ps.ammo[weapon] = 200;
 	}
 }
@@ -257,6 +269,10 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other) {
 	}
 
 	// add the weapon
+	if(ent->item->giTag == WP_RAILGUN && !(other->client->ps.stats[STAT_WEAPONS] & ( 1 << ent->item->giTag ))) {
+		other->client->ps.ammo[ent->item->giTag] = 3;
+	}
+
 	other->client->ps.stats[STAT_WEAPONS] |= ( 1 << ent->item->giTag );
 
 	Add_Ammo( other, ent->item->giTag, quantity );

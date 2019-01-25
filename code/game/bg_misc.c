@@ -292,7 +292,7 @@ gitem_t	bg_itemlist[] =
 		NULL, NULL, NULL},
 /* icon */		"icons/iconw_railgun",
 /* pickup */	"Railgun",
-		10,
+		3,
 		IT_WEAPON,
 		WP_RAILGUN,
 /* precache */ "",
