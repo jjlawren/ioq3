@@ -284,6 +284,9 @@ struct gclient_s {
 
 	int			accuracy_shots;		// total number of shots
 	int			accuracy_hits;		// total number of hits
+	int			accuracy_shots_by_weapon[WP_NUM_WEAPONS];
+	int			accuracy_hits_by_weapon[WP_NUM_WEAPONS];
+	int			accuracy_splash_hits_by_weapon[WP_NUM_WEAPONS];
 
 	//
 	int			lastkilled_client;	// last client that this client killed

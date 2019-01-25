@@ -319,6 +319,8 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		PrintMsg(NULL, "%s" S_COLOR_WHITE " fragged %s's flag carrier!\n",
 			attacker->client->pers.netname, TeamName(team));
 
+		G_LogPrintf("Kill_Carrier: %d\n", attacker-g_entities);	//TESTING!!!!
+
 		// the target had the flag, clear the hurt carrier
 		// field on the other team
 		for (i = 0; i < g_maxclients.integer; i++) {
@@ -356,6 +358,8 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 		attacker->client->pers.teamState.carrierdefense++;
 		targ->client->pers.teamState.lasthurtcarrier = 0;
+
+		G_LogPrintf("Defend_Hurt_Carrier: %d\n", attacker-g_entities);
 
 		attacker->client->ps.persistant[PERS_DEFEND_COUNT]++;
 		// add the sprite over the player's head
@@ -435,6 +439,8 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		AddScore(attacker, targ->r.currentOrigin, CTF_FLAG_DEFENSE_BONUS);
 		attacker->client->pers.teamState.basedefense++;
 
+		G_LogPrintf("Defend_Base: %d\n", attacker-g_entities);
+
 		attacker->client->ps.persistant[PERS_DEFEND_COUNT]++;
 		// add the sprite over the player's head
 		attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP );
@@ -455,6 +461,8 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 			attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam) {
 			AddScore(attacker, targ->r.currentOrigin, CTF_CARRIER_PROTECT_BONUS);
 			attacker->client->pers.teamState.carrierdefense++;
+
+			G_LogPrintf("Defend_Carrier: %d\n", attacker-g_entities);
 
 			attacker->client->ps.persistant[PERS_DEFEND_COUNT]++;
 			// add the sprite over the player's head
@@ -700,6 +708,7 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 		// hey, it's not home.  return it by teleporting it back
 		PrintMsg( NULL, "%s" S_COLOR_WHITE " returned the %s flag!\n", 
 			cl->pers.netname, TeamName(team));
+		G_LogPrintf("Flag_Return: %d\n", other-g_entities);
 		AddScore(other, ent->r.currentOrigin, CTF_RECOVERY_BONUS);
 		other->client->pers.teamState.flagrecovery++;
 		other->client->pers.teamState.lastreturnedflag = level.time;
@@ -722,6 +731,9 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 	else {
 #endif
 	PrintMsg( NULL, "%s" S_COLOR_WHITE " captured the %s flag!\n", cl->pers.netname, TeamName(OtherTeam(team)));
+
+	G_LogPrintf("Flag_Capture: %d\n", other-g_entities);
+
 #ifdef MISSIONPACK
 	}
 #endif
@@ -769,6 +781,8 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 				AddScore (player, ent->r.currentOrigin, CTF_RETURN_FLAG_ASSIST_BONUS);
 				other->client->pers.teamState.assists++;
 
+				G_LogPrintf("Flag_Assist_Return: %d\n", player-g_entities);
+
 				player->client->ps.persistant[PERS_ASSIST_COUNT]++;
 				// add the sprite over the player's head
 				player->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP );
@@ -780,6 +794,9 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 				CTF_FRAG_CARRIER_ASSIST_TIMEOUT > level.time) {
 				AddScore(player, ent->r.currentOrigin, CTF_FRAG_CARRIER_ASSIST_BONUS);
 				other->client->pers.teamState.assists++;
+
+				G_LogPrintf("Flag_Assist_Frag: %d\n", player-g_entities);
+
 				player->client->ps.persistant[PERS_ASSIST_COUNT]++;
 				// add the sprite over the player's head
 				player->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP );
@@ -815,6 +832,8 @@ int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team ) {
 #endif
 		PrintMsg (NULL, "%s" S_COLOR_WHITE " got the %s flag!\n",
 			other->client->pers.netname, TeamName(team));
+
+		G_LogPrintf("Flag_Pickup: %d\n", other-g_entities);
 
 		if (team == TEAM_RED)
 			cl->ps.powerups[PW_REDFLAG] = INT_MAX; // flags never expire

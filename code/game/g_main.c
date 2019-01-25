@@ -1145,6 +1145,14 @@ Append information about this game to the log file
 void LogExit( const char *string ) {
 	int				i, numSorted;
 	gclient_t		*cl;
+	double accuracy;
+	double weapon_accuracy;
+	int weapon_iterator_index;
+	char *weapon_name;
+	int shots;
+	int hits;
+	int splash_hits;
+	char *weapon_stats;
 #ifdef MISSIONPACK
 	qboolean won = qtrue;
 	team_t team = TEAM_RED;
@@ -1183,6 +1191,52 @@ void LogExit( const char *string ) {
 		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 
 		G_LogPrintf( "score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], ping, level.sortedClients[i],	cl->pers.netname );
+		hits = cl->accuracy_hits;
+		shots = cl->accuracy_shots;
+		if(cl->accuracy_shots > 0) {
+			accuracy = (cl->accuracy_hits * 100.0) / cl->accuracy_shots;
+		}else {
+			accuracy = 0.0;
+		}
+		G_LogPrintf( "%s shots: %d hits: %d accuracy: %.2f\n",cl->pers.netname, shots, hits, accuracy);
+		weapon_stats = va("Weapon_Stats: %d ", cl->ps.clientNum);
+		for(weapon_iterator_index = 0; weapon_iterator_index < WP_NUM_WEAPONS; weapon_iterator_index++ ) {
+			switch(weapon_iterator_index) {
+				case WP_SHOTGUN: weapon_name=  "Shotgun";break;
+				case WP_MACHINEGUN: weapon_name=  "MachineGun";break;
+				case WP_GRENADE_LAUNCHER: weapon_name=  "G.Launcher";break;
+				case WP_ROCKET_LAUNCHER: weapon_name=  "R.Launcher";break;
+				case WP_PLASMAGUN: weapon_name=  "Plasmagun";break;
+				case WP_RAILGUN: weapon_name=  "Railgun";break;
+				case WP_LIGHTNING: weapon_name=  "LightningGun";break;
+ #ifdef MISSIONPACK
+				case WP_NAILGUN: weapon_name=  "Nail gun";break;
+				case WP_CHAINGUN: weapon_name=  "Chain gun";break;
+				case WP_PROX_LAUNCHER: weapon_name=  "Proximity Launcher";break;
+ #endif
+				case WP_BFG:
+				case WP_GAUNTLET:/*not counted*/
+				default:
+					continue;
+			}
+
+			hits = cl->accuracy_hits_by_weapon[weapon_iterator_index];
+			shots = cl->accuracy_shots_by_weapon[weapon_iterator_index];
+			splash_hits = cl->accuracy_splash_hits_by_weapon[weapon_iterator_index];
+			if(shots > 0) {
+				weapon_accuracy = ((hits + splash_hits) * 100.0) / shots;
+			}else {
+				weapon_accuracy = 0.0;
+			}
+			weapon_stats = va("%s %s:%d:%d:0:0 ",weapon_stats, weapon_name,shots, hits + splash_hits);
+			if(weapon_iterator_index == WP_PLASMAGUN || weapon_iterator_index == WP_ROCKET_LAUNCHER) {
+				weapon_stats = va("%s %s.Splash:%d:%d:0:0 ",weapon_stats, weapon_name,shots, splash_hits);
+				weapon_stats = va("%s %s.Direct:%d:%d:0:0 ",weapon_stats, weapon_name,shots, hits);
+			}
+			G_LogPrintf( "%s %s shots: %d hits: %d splash_hits: %d accuracy: %.2f\n",cl->pers.netname, weapon_name, shots, hits, splash_hits, weapon_accuracy);
+		}
+		G_LogPrintf("%s Given:0 Recvd:0 TeamDmg:0\n", weapon_stats);
+
 #ifdef MISSIONPACK
 		if (g_singlePlayer.integer && !(g_entities[cl - level.clients].r.svFlags & SVF_BOT)) {
 			team = cl->sess.sessionTeam;

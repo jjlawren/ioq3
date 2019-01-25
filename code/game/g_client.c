@@ -1055,6 +1055,10 @@ void ClientSpawn(gentity_t *ent) {
 	int		savedPing;
 //	char	*savedAreaBits;
 	int		accuracy_hits, accuracy_shots;
+	int		accuracy_hits_by_weapon[WP_NUM_WEAPONS];
+	int		accuracy_shots_by_weapon[WP_NUM_WEAPONS];
+	int		accuracy_splash_hits_by_weapon[WP_NUM_WEAPONS];
+	int		weapon_iterator_index;
 	int		eventSequence;
 	char	userinfo[MAX_INFO_STRING];
 
@@ -1112,6 +1116,12 @@ void ClientSpawn(gentity_t *ent) {
 //	savedAreaBits = client->areabits;
 	accuracy_hits = client->accuracy_hits;
 	accuracy_shots = client->accuracy_shots;
+	for(weapon_iterator_index = 0; weapon_iterator_index < WP_NUM_WEAPONS; weapon_iterator_index++) {
+		accuracy_hits_by_weapon[weapon_iterator_index] = client->accuracy_hits_by_weapon[weapon_iterator_index];
+		accuracy_shots_by_weapon[weapon_iterator_index] = client->accuracy_shots_by_weapon[weapon_iterator_index];
+		accuracy_splash_hits_by_weapon[weapon_iterator_index] = client->accuracy_splash_hits_by_weapon[weapon_iterator_index];
+	}
+
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
 	}
@@ -1125,6 +1135,12 @@ void ClientSpawn(gentity_t *ent) {
 //	client->areabits = savedAreaBits;
 	client->accuracy_hits = accuracy_hits;
 	client->accuracy_shots = accuracy_shots;
+	for(weapon_iterator_index = 0; weapon_iterator_index < WP_NUM_WEAPONS; weapon_iterator_index++) {
+		client->accuracy_hits_by_weapon[weapon_iterator_index] = accuracy_hits_by_weapon[weapon_iterator_index];
+		client->accuracy_shots_by_weapon[weapon_iterator_index] = accuracy_shots_by_weapon[weapon_iterator_index];
+		client->accuracy_splash_hits_by_weapon[weapon_iterator_index] = accuracy_splash_hits_by_weapon[weapon_iterator_index];
+	}
+
 	client->lastkilled_client = -1;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
