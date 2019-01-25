@@ -384,6 +384,7 @@ void CheckAlmostCapture( gentity_t *self, gentity_t *attacker ) {
 			// if the player was *very* close
 			VectorSubtract( self->client->ps.origin, ent->s.origin, dir );
 			if ( VectorLength(dir) < 200 ) {
+				trap_SendServerCommand( -1, va("print \"%s flipped the script on %s!.\n\"",attacker->client->pers.netname, self->client->pers.netname) );
 				self->client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_HOLYSHIT;
 				if ( attacker->client ) {
 					attacker->client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_HOLYSHIT;
@@ -417,6 +418,7 @@ void CheckAlmostScored( gentity_t *self, gentity_t *attacker ) {
 			// if the player was *very* close
 			VectorSubtract( self->client->ps.origin, ent->s.origin, dir );
 			if ( VectorLength(dir) < 200 ) {
+				trap_SendServerCommand( -1, va("print \"%s flipped the script on %s!.\n\"",attacker->client->pers.netname, self->client->pers.netname) );
 				self->client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_HOLYSHIT;
 				if ( attacker->client ) {
 					attacker->client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_HOLYSHIT;
